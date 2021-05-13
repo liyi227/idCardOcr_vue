@@ -10,6 +10,7 @@
     "axios": "^0.21.1",
     "core-js": "^3.11.0",
     "element-plus": "^1.0.2-beta.44",
+    "node-sass": "^4.14.1",
     "vue": "^3.0.11",
     "vue-axios": "^3.2.4",
     "vue-router": "^4.0.6-0",
@@ -21,8 +22,10 @@
     "@vue/cli-plugin-vuex": "~4.5.12",
     "@vue/cli-service": "~4.5.12",
     "@vue/compiler-sfc": "^3.0.0",
-    "node-sass": "^6.0.0",
-    "sass-loader": "^11.1.0",
+    "sass": "^1.32.13",
+    "sass-loader": "^8.0.2",
+    "style-resources-loader": "^1.4.1",
+    "vue-cli-plugin-style-resources-loader": "~0.1.5",
     "vue-loader-v16": "^16.0.0-beta.5.4"
   },
   "browserslist": [

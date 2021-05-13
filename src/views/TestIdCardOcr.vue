@@ -124,23 +124,24 @@
 
             <div class="span2">
               <!-- <a class="btn btn-large btn-green-light gap" @click="StartOCR($event)">开始</a> -->
-              <el-button class="btn btn-large  gap" @click="StartOCR($event)" type="primary" plain="" style="margin-left: 0;">开始
+              <el-button class="btn btn-large  gap" @click="StartOCR($event)" type="primary" plain=""
+                style="margin-left: 0;">开始
               </el-button>
 
               <!-- <a id="btnShowOverlay" class="example-image-link btn btn-large btn-green-light" @click="ShowOverlay()">
                 校对
               </a> -->
-              <el-button id="btnShowOverlay" class="example-image-link btn btn-large " type="primary"  plain=""
+              <el-button id="btnShowOverlay" class="example-image-link btn btn-large " type="primary" plain=""
                 @click="ShowOverlay()" :disabled="isBtnActive" style="margin-left: 0;">校对</el-button>
 
               <!-- <a id="btnDownloadText" class="btn btn-large btn-green-light" @click="DownloadText()">
                 下载
               </a> -->
-              <el-button id="btnDownloadText" class="btn btn-large " type="primary"  plain=""
-                @click="DownloadText()" :disabled="isBtnActive" style=" margin-left: 0;">下载</el-button>
+              <el-button id="btnDownloadText" class="btn btn-large " type="primary" plain="" @click="DownloadText()"
+                :disabled="isBtnActive" style=" margin-left: 0;">下载</el-button>
 
               <!-- <a class="btn btn-large btn-green-light" @click="Clear()">重置</a> -->
-              <el-button class="btn btn-large " type="primary"  plain="" @click="Clear()" style=" margin-left: 0;">
+              <el-button class="btn btn-large " type="primary" plain="" @click="Clear()" style=" margin-left: 0;">
                 重置</el-button>
             </div>
 
@@ -169,7 +170,7 @@
                     <el-input class="idCardInfo" v-model="idCardInfo.nation" style="width: 25%; text-align: center;">
                     </el-input>
                   </li>
-                  
+
                   <!-- 出生年月日 -->
                   <li>
                     <p class="idCardInfoLabel">出生：</p>
@@ -193,7 +194,7 @@
                       v-model="idCardInfo.address" style="width: 80%;">
                     </el-input>
                   </li>
-                  
+
                   <!-- 身份证号码 -->
                   <li>
                     <p class="idCardInfoLabel">身份证号码：</p>
@@ -243,9 +244,9 @@
         dlProgress: 0, //进度条默认值为0
         startTimer: '',
         endTimer: '',
-        ocrTotalTime: null,//识别花费总时间
+        ocrTotalTime: null, //识别花费总时间
         previewImage: null, //预览图片默认为null
-        sucOrErrMsg:"",//识别结果消息提示默认为""
+        sucOrErrMsg: "", //识别结果消息提示默认为""
         // idCardInfo: "", //身份证信息默认为""
         idCardInfo: {
           name: "", //姓名
@@ -311,11 +312,6 @@
       //上传图片
       uploadImage(event) {
         let _this = this;
-        _this.isDrogShow = false; //取消显示虚线提示框
-        _this.isTextShow = true; //显示文本提示(加载成功)
-        _this.isPreImgShow = true; //显示预览图片
-        _this.isProgressBar = false; //取消显示进度条
-        _this.dlProgress = 0; //将进度条进度重置为0
 
         let image = document.getElementById('imageFile').files[0]; //获取图片
         let name = document.getElementById('imageFile').files[0].name; //图片文件名
@@ -323,6 +319,17 @@
         //console.log(arr); //测试打印arr数组即打印文件主名和文件扩展名
         let fileSize = 0; //文件大小
         if (image) {
+          
+          _this.isDrogShow = false; //取消显示虚线提示框
+          _this.isTextShow = true; //显示文本提示(加载成功)
+          _this.isPreImgShow = true; //显示预览图片
+          _this.isProgressBar = false; //取消显示进度条
+          _this.dlProgress = 0; //将进度条进度重置为0
+          _this.isMsgShow = false; //取消显示识别结果消息提示
+          _this.idCardInfo = ""; //清除身份证信息
+          
+         
+          
           fileSize = image.size;
           if (fileSize > 10 * 1024 * 1024) {
             alert("文件大小不能大于10M！");
@@ -333,19 +340,21 @@
             file.value = "";
             return false;
           }
+          
+          let reader = new FileReader();
+          reader.readAsDataURL(image); //将image转换为Base64编码的图片
+          //当读取成功后触发
+          reader.onloadend = e => {
+            //没有返回值，但是读取完毕后，将读取结果存储在对象的result中
+            let imgBase64 = e.target.result; //imgBase64存放图片的Base64编码串
+            _this.previewImage = imgBase64; //将Base64图片编码串动态绑定到img标签（：src值为previewImage）
+            //document.getElementById('previewImage').src = imgBase64; //将imgBase64编码值赋值给ID为previewImage的src属性
+          }
         } else {
           return false;
         }
 
-        let reader = new FileReader();
-        reader.readAsDataURL(image); //将image转换为Base64编码的图片
-        //当读取成功后触发
-        reader.onloadend = e => {
-          //没有返回值，但是读取完毕后，将读取结果存储在对象的result中
-          let imgBase64 = e.target.result; //imgBase64存放图片的Base64编码串
-          _this.previewImage = imgBase64; //将Base64图片编码串动态绑定到img标签（：src值为previewImage）
-          //document.getElementById('previewImage').src = imgBase64; //将imgBase64编码值赋值给ID为previewImage的src属性
-        }
+        
       },
 
       allowDrop(e) {
@@ -422,7 +431,6 @@
           _this.startProgress();
 
           instance.post('http://127.0.0.1:8081/ocr/idCardOcr', formData, config)
-
             .then(response => {
               _this.dlProgress = 100;
               // console.log(JSON.stringify(response));

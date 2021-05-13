@@ -4,7 +4,9 @@
       <div class="ocr">
         <router-link to="/test">Test-OCR</router-link><br />
         <router-link to="/progressBar">ProgressBar</router-link><br />
-        <router-link to="/testIdCardOcr">TestIdCardOcr</router-link>
+        <router-link to="/testIdCardOcr">TestIdCardOcr</router-link><br />
+        <router-link to="/login">Login</router-link><br />
+        <router-link to="/index">Index</router-link>
       </div>
       <img alt="Vue logo" src="../assets/logo.png">
       <HelloWorld />

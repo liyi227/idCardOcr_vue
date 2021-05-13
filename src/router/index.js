@@ -6,6 +6,8 @@ import Home from '../views/Home.vue'
 import Test from '../views/Test.vue'
 import ProgressBar from '../views/ProgressBar.vue'
 import TestIdCardOcr from '../views/TestIdCardOcr.vue'
+import Login from '../views/Login.vue'
+import Index from '../views/index.vue'
 
 const routes = [{
     path: '/',
@@ -30,7 +32,18 @@ const routes = [{
     path: '/testIdCardOcr',
     name: 'TestIdCardOcr',
     component: TestIdCardOcr
-  }
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: Login
+  },
+  {
+    path: '/index',
+    name: 'Index',
+    component: Index
+  },
+  
 ]
 
 const router = createRouter({
