@@ -1,56 +1,10 @@
 <template>
-  <div id="header">
-    <h1>ly的OCR识别测试</h1>
-  </div>
-
-  <div id="content">
-    <div id="page-header">
-      <div class="row clearfix">
-        <div class="span12 whitebg">
-          <h1 class="slogon">在线身份证检测与识别 － LiYiOCR</h1>
-          <div class="process-sequence">
-            <ul class="fixed">
-              <li class="upload">
-                <img class="processImg" src="../assets/upload.png" />
-                <div class="process-description">
-                  <h3 class="prodesc">
-                    <strong>上传身份证</strong>
-                  </h3>
-                </div>
-              </li>
-              <li class="recognition">
-                <img class="processImg" src="../assets/start.png" />
-                <div class="process-description">
-                  <h3 class="prodesc">
-                    <strong>开始识别</strong>
-                  </h3>
-                </div>
-              </li>
-              <li class="result">
-                <img class="processImg" src="../assets/result.png" />
-                <div class="process-description">
-                  <h3 class="prodesc">
-                    <strong>获得结果</strong>
-                  </h3>
-                </div>
-              </li>
-              <li class="correct">
-                <img class="processImg" src="../assets/correct.png" />
-                <div class="process-description">
-                  <h3 class="prodesc">
-                    <strong>文本校正</strong>
-                  </h3>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
+  <div style="width: 100%;height: 10%;">
+    <userHeader></userHeader>
+    <div style="width: 100%; text-align: center; font-size: 1rem;">
+      <span>尊敬的{{userName}},欢迎您使用森北在线测评系统</span>
     </div>
-
-    <div class="link"></div>
-
-
+    <el-divider></el-divider>
     <form action="/OCR/ParseImage" class="form-horizontal" enctype="multipart/form-data" id="ocrForm" method="post"
       novalidate="novalidate">
       <input name="__RequestVerificationToken" type="hidden" value="unknown">
@@ -58,7 +12,7 @@
         <div class="row">
           <div class="span12">
             <h3 class="headline">
-              <span>在线身份证识别，OCR服务<i class="mobileHidden">－LiYiOCR</i></span>
+              <span>在线身份证识别，OCR服务<i class="mobileHidden">－核验身份</i></span>
             </h3>
           </div>
 
@@ -72,19 +26,11 @@
             </div>
           </div>
 
-          <div class="span12">
-            <h2 class="boldo">或者</h2>
+          <div class="span12" style="margin: 1%;">
+            <h2 class="boldo"></h2>
           </div>
 
-          <div class="span12 diyItem">
-            <div class="span4">
-              <p class="diyLabel">输入身份证图片url ( png / jpg )</p>
-            </div>
-            <div class="span8">
-              <input type="text" id="imageUrl" class="form-control choose">
-            </div>
-          </div>
-
+          <!-- <div style="margin"></div> -->
 
           <div style=" clear:both; margin-top:50px !important;"></div>
 
@@ -112,7 +58,7 @@
               <div class="panel-body">
                 <div id="filedrag" v-show="isDrogShow" @drop="drop($event)" @dragover="allowDrop($event)"
                   style="height: 80%; display: block">
-                  你也可以把图片拖拽到这里
+                  你也可以把身份证图片拖拽到这里
                 </div>
                 <img id="previewImage" class="img-responsive" :src="previewImage" v-show="isPreImgShow"
                   style="float:left; height:90%; width:100%;" />
@@ -157,7 +103,7 @@
                   <!-- 姓名 -->
                   <li>
                     <p class="idCardInfoLabel">姓名：</p>
-                    <el-input class="idCardInfo" v-model="idCardInfo.name" style="width: 40%;"></el-input>
+                    <el-input class="idCardInfo" v-model="idCardInfo.name" readonly="true" style="width: 40%;"></el-input>
                   </li>
 
                   <!-- 性别和名族 -->
@@ -198,7 +144,7 @@
                   <!-- 身份证号码 -->
                   <li>
                     <p class="idCardInfoLabel">身份证号码：</p>
-                    <el-input class="idCardInfo" v-model="idCardInfo.idNumber" style="width: 60%;">
+                    <el-input class="idCardInfo" v-model="idCardInfo.idNumber" readonly="true" style="width: 60%;">
                     </el-input>
                   </li>
 
@@ -218,13 +164,13 @@
       </fieldset>
     </form><br><br>
 
-
   </div>
-
-
 </template>
 
 <script>
+  import userHeader from "../components/Header.vue";
+  import Cookies from 'js-cookie';
+
   import qs from 'qs';
   import global_ from '/src/views/Global.vue';
   import {
@@ -233,8 +179,10 @@
   } from '../utils/imageConvert.js';
 
   export default {
+    name: 'UserInfo',
     data() {
       return {
+        userName: Cookies.get('userName'),
         isBtnActive: false,
         isDrogShow: true, //默认显示拖拽虚线提示框
         isTextShow: false, //默认不显示文本提示(加载成功)
@@ -260,6 +208,10 @@
         },
       }
     },
+
+    components: {
+      userHeader
+    },
     props: {
       progressStatus: {
         type: Boolean,
@@ -283,7 +235,6 @@
         e.preventDefault(); //阻止 document.ondrop的默认行为  *** 在新窗口中打开拖进的图片
       };
     },
-
     methods: {
       startProgress() {
         this.startTimer = setInterval(() => {
@@ -319,7 +270,7 @@
         //console.log(arr); //测试打印arr数组即打印文件主名和文件扩展名
         let fileSize = 0; //文件大小
         if (image) {
-          
+
           _this.isDrogShow = false; //取消显示虚线提示框
           _this.isTextShow = true; //显示文本提示(加载成功)
           _this.isPreImgShow = true; //显示预览图片
@@ -327,8 +278,8 @@
           _this.dlProgress = 0; //将进度条进度重置为0
           _this.isMsgShow = false; //取消显示识别结果消息提示
           _this.idCardInfo = ""; //清除身份证信息
-          
-         
+
+
           fileSize = image.size;
           if (fileSize > 10 * 1024 * 1024) {
             alert("文件大小不能大于10M！");
@@ -339,7 +290,7 @@
             file.value = "";
             return false;
           }
-          
+
           let reader = new FileReader();
           reader.readAsDataURL(image); //将image转换为Base64编码的图片
           //当读取成功后触发
@@ -353,7 +304,7 @@
           return false;
         }
 
-        
+
       },
 
       allowDrop(e) {
@@ -473,12 +424,11 @@
 
         _this.$refs.clearFile.value = ''; // 清空input-file文件
       }
+    }
 
-    },
 
-  };
+  }
 </script>
-
 
 <style>
   @import url("../assets/lazy.css");

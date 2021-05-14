@@ -1,8 +1,13 @@
 <template>
+  <div style="width: 100%;height: 10%;">
+    <userHeader></userHeader>
+
+  </div>
+
   <div class="login-container">
     <el-form :model="userLoginRuleForm" :rules="userLoginRules" status-icon ref="userLoginRuleForm"
       label-position="left" label-width="0px" class="demo-ruleForm login-page">
-      <h3 class="title">欢迎使用考试系统</h3>
+      <h3 class="title">欢迎使用森北测评系统，请登录</h3>
       <el-form-item prop="userName">
         <el-input type="text" v-model="userLoginRuleForm.userName" auto-complete="off" placeholder="请输入用户名"></el-input>
       </el-form-item>
@@ -20,7 +25,14 @@
 </template>
 
 <script>
+  import userHeader from "../components/Header.vue";
+  import Cookie from 'js-cookie'
+
   export default {
+    name: 'UserInfo',
+    components: {
+      userHeader
+    },
     data() {
       return {
         logining: false,
@@ -41,13 +53,13 @@
             },
             {
               min: 4,
-              max: 12,
+              max: 20,
               message: '用户名为4-12位',
               trigger: 'blur'
             },
             {
               min: 4,
-              max: 12,
+              max: 20,
               message: '用户名为4-12位',
               trigger: 'change'
             }
@@ -75,60 +87,72 @@
               trigger: 'change'
             }
           ],
-        }
-        /* ,checked: false */
+        },
+
       }
     },
+
+    
     methods: {
       submitLoginRuleForm(event) {
         let _this = this;
-        var isMeetUserLoginRules = false;//是否符合账号和密码输入规则
+        var isMeetUserLoginRules = false; //是否符合账号和密码输入规则
 
         isMeetUserLoginRules = (4 <= _this.userLoginRuleForm.userName.length && _this.userLoginRuleForm.userName
             .length <=
-            12) &&
+            20) &&
           (4 <= _this.userLoginRuleForm.password.length && _this.userLoginRuleForm.password.length <= 16);
 
         if (isMeetUserLoginRules) {
           _this.$refs.userLoginRuleForm.validate((valid) => {
 
-            _this.axios.post('http://127.0.0.1:8081/user/login', _this.userLoginRuleForm)
-              .then(response => {
-                console.log(response);
+            if (valid) {
+              _this.axios.post('http://127.0.0.1:8081/user/login', _this.userLoginRuleForm)
+                .then(response => {
+                  console.log(response);
 
-                var resultCode = response.data.code;
-                var resultMsg = response.data.msg;
-                if (resultCode == 1) {
-                  _this.$message({
-                    message: '登录成功',
-                    type: 'success',
-                  });
-                  // var resultUserList = response.data.list[0];
-                  // console.log(resultUserList);
-                  // sessionStorage.setItem("userName", resultUserList.userName);
-                  // sessionStorage.setItem("realName", resultUserList.realName);
-                  // sessionStorage.setItem("department", resultUserList.department);
-                  // sessionStorage.setItem("userRole", resultUserList.userRole);
-                  _this.$router.push({
-                    path: "/testIdCardOcr"
-                  })
-                } else if (resultCode == -1) {
-                  _this.$message({
-                    message: resultMsg,
-                    type: 'error',
-                  });
-                }
-              })
-              .catch(error => {
-                console.log(error);
-                console.log("登录异常，请联系管理员！");
-              })
+                  var resultCode = response.data.code;
+                  var resultMsg = response.data.msg;
+                  if (resultCode == 1) {
+                    _this.$message({
+                      showClose: true,
+                      message: '登录成功',
+                      type: 'success',
+                    });
+                    // var resultUserList = response.data.list[0];
+                    // console.log(resultUserList);
+                    Cookie.set('userName', _this.userLoginRuleForm.userName); //将用户名缓存到cookie中
+                    console.log("cookie:" + Cookie.get('userName')); //打印测试
+
+                    // sessionStorage.setItem("realName", resultUserList.realName);
+                    // sessionStorage.setItem("department", resultUserList.department);
+                    // sessionStorage.setItem("userRole", resultUserList.userRole);
+                    _this.$router.push({
+                      // path: "/testIdCardOcr"
+                      path: "/question"
+                    })
+                  } else if (resultCode == -1) {
+                    _this.$message({
+                      showClose: true,
+                      message: resultMsg,
+                      type: 'error',
+                    });
+                  }
+                })
+              // .catch(error => {
+              //   _this.$message({
+              //     showClose: true,
+              //     message: "登录异常，请联系管理员！",
+              //     type: 'error',
+              //   });
+              // })
+            }
           })
         }
 
+      },
+    
 
-
-      }
     }
   };
 </script>

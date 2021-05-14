@@ -10,7 +10,7 @@ import router from './router'
 import store from './store'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
-
+import Cookies from 'js-cookie'
 
 // 添加请求拦截器
 // axios.interceptors.request.use(function(config) {
@@ -33,6 +33,7 @@ createApp(App)
   .use(router)
   .use(VueAxios, axios)
   .use(ElementPlus)
+  .use(Cookies)
   .mount('#app')
 
 

@@ -8,6 +8,7 @@ import ProgressBar from '../views/ProgressBar.vue'
 import TestIdCardOcr from '../views/TestIdCardOcr.vue'
 import Login from '../views/Login.vue'
 import Index from '../views/index.vue'
+import Question from '../views/Question.vue'
 
 const routes = [{
     path: '/',
@@ -42,6 +43,11 @@ const routes = [{
     path: '/index',
     name: 'Index',
     component: Index
+  },
+  {
+    path: '/question',
+    name: 'Question',
+    component: Question
   },
   
 ]
